@@ -29,6 +29,17 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body>{children}</body>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js');
+                });
+              }
+            `,
+        }}
+      />
     </html>
   )
 }

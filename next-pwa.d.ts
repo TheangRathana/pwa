@@ -6,7 +6,24 @@ declare module 'next-pwa' {
       disable?: boolean
       register?: boolean
       skipWaiting?: boolean
-      // Add other config options as needed
+      runtimeCaching?: Array<{
+        urlPattern: RegExp | string
+        handler: string
+        options?: {
+          cacheName?: string
+          expiration?: {
+            maxEntries?: number
+            maxAgeSeconds?: number
+          }
+          networkTimeoutSeconds?: number
+          backgroundSync?: {
+            name: string
+            options?: {
+              maxRetentionTime?: number
+            }
+          }
+        }
+      }>
     }
   
     function withPWA(config: PWAConfig): (nextConfig: NextConfig) => NextConfig

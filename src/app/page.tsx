@@ -13,17 +13,30 @@ export default function Home() {
 
   const requestPermission = async () => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      const permission = await Notification.requestPermission()
-      setNotificationPermission(permission)
+      try {
+        const permission = await Notification.requestPermission()
+        setNotificationPermission(permission)
+        console.log('Notification permission:', permission)
+      } catch (error) {
+        console.error('Error requesting notification permission:', error)
+      }
+    } else {
+      console.error('Notifications not supported')
     }
   }
 
   const sendNotification = () => {
     if (notificationPermission === 'granted') {
-      new Notification('Test Notification', {
-        body: 'This is a test notification from your PWA!',
-        icon: '/icon-192x192.png'
-      })
+      try {
+        new Notification('Test Notification', {
+          body: 'This is a test notification from your PWA!',
+          icon: '/icon-192x192.png'
+        })
+      } catch (error) {
+        console.error('Error sending notification:', error)
+      }
+    } else {
+      console.error('Notification permission not granted')
     }
   }
 
