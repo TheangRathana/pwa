@@ -1,1 +1,32 @@
-if(!self.define){let e,s={};const i=(i,a)=>(i=new URL(i+".js",a).href,s[i]||new Promise((s=>{if("document"in self){const e=document.createElement("script");e.src=i,e.onload=s,document.head.appendChild(e)}else e=i,importScripts(i),s()})).then((()=>{let e=s[i];if(!e)throw new Error(`Module ${i} didn’t register its module`);return e})));self.define=(a,n)=>{const t=e||("document"in self?document.currentScript.src:"")||location.href;if(s[t])return;let c={};const r=e=>i(e,t),f={module:{uri:t},exports:c,require:r};s[t]=Promise.all(a.map((e=>f[e]||r(e)))).then((e=>(n(...e),c)))}}define(["./workbox-cb477421"],(function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/_next/static/JFJOPmas_UZBSbFEEMsGS/_buildManifest.js",revision:"d767ffba0defde7e858a198bc34cb9e9"},{url:"/_next/static/JFJOPmas_UZBSbFEEMsGS/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/chunks/215-624c6edaceb5ec52.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/4bd1b696-239c50da69b5278f.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/app/_not-found/page-db268f776fca6aa4.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/app/layout-82508dd125b4d520.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/app/page-36c2772ce5cb308f.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/framework-d61873523a8b382f.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/main-app-44fef75fc7c447d6.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/main-f795d87dd525cb9a.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/pages/_app-6a626577ffa902a4.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/pages/_error-1be831200e60c5c0.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/_next/static/chunks/polyfills-42372ed130431b0a.js",revision:"846118c33b2c0e922d7b3a7676f81f6f"},{url:"/_next/static/chunks/webpack-b5d81ab04c5b38dd.js",revision:"JFJOPmas_UZBSbFEEMsGS"},{url:"/file.svg",revision:"d09f95206c3fa0bb9bd9fefabfd0ea71"},{url:"/globe.svg",revision:"2aaafa6a49b6563925fe440891e32717"},{url:"/icon-192x192.png",revision:"1e589b786be913ed7b4b04e94cbd0d68"},{url:"/icon-512x512.png",revision:"6cfac3c7bc1fd0ff2fd294c4189660da"},{url:"/manifest.json",revision:"e4b35169c7975c4c6c85298e81af1acc"},{url:"/next.svg",revision:"8e061864f388b47f33a1c3780831193e"},{url:"/vercel.svg",revision:"c0af2f507b369b085b35ef4bbe3bcf1e"},{url:"/window.svg",revision:"a2760511c65806022ad20adf74370ff3"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:s,event:i,state:a})=>s&&"opaqueredirect"===s.type?new Response(s.body,{status:200,statusText:"OK",headers:s.headers}):s}]}),"GET"),e.registerRoute(/^https?.*/,new e.NetworkFirst({cacheName:"offlineCache",plugins:[new e.ExpirationPlugin({maxEntries:200})]}),"GET")}));
+self.addEventListener('push', function(event) {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.body,
+      icon: '/web-app-manifest-192x192.png',
+      badge: '/web-app-manifest-192x192.png',
+      data: {
+        url: data.url || '/'
+      }
+    };
+
+    event.waitUntil(
+      self.registration.showNotification(data.title, options)
+    );
+  }
+});
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url)
+  );
+});
+
+self.addEventListener('install', function(event) {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(self.clients.claim());
+});
