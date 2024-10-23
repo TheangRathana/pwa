@@ -12,26 +12,17 @@ export default function Home() {
 }
 
 function PushNotificationManager() {
-  const [isSupported, setIsSupported] = useState(false)
   const [subscription, setSubscription] = useState<PushSubscription | null>(null)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-      setIsSupported(true)
-      registerServiceWorker()
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async function () {
+        await navigator.serviceWorker.register("/sw.js");
+      });
     }
-  }, [])
+  }, []);
 
-  async function registerServiceWorker() {
-    try {
-      const registration = await navigator.serviceWorker.register('/sw.js')
-      const sub = await registration.pushManager.getSubscription()
-      setSubscription(sub)
-    } catch (error) {
-      console.error('Error registering service worker:', error)
-    }
-  }
 
   async function subscribeToPush() {
     try {
@@ -41,7 +32,7 @@ function PushNotificationManager() {
         applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
       })
       setSubscription(sub)
-      
+
       // Serialize the PushSubscription object
       const serializedSub = {
         endpoint: sub.endpoint,
@@ -50,7 +41,7 @@ function PushNotificationManager() {
           p256dh: arrayBufferToBase64(sub.getKey('p256dh'))
         }
       }
-      
+
       await subscribeUser(serializedSub)
     } catch (error) {
       console.error('Error subscribing to push:', error)
@@ -93,18 +84,13 @@ function PushNotificationManager() {
     if (!buffer) return ''
     return btoa(String.fromCharCode(...new Uint8Array(buffer)))
   }
-
-  if (!isSupported) {
-    return <p>Push notifications are not supported in this browser.</p>
-  }
-
   return (
     <div className="space-y-4">
       <h3 className="text-2xl font-bold">Push Notifications</h3>
       {subscription ? (
         <>
           <p>You are subscribed to push notifications.</p>
-          <button 
+          <button
             onClick={unsubscribeFromPush}
             className="bg-red-500 text-white px-4 py-2 rounded"
           >
@@ -118,7 +104,7 @@ function PushNotificationManager() {
               onChange={(e) => setMessage(e.target.value)}
               className="border rounded px-2 py-1"
             />
-            <button 
+            <button
               onClick={sendTestNotification}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
@@ -129,7 +115,7 @@ function PushNotificationManager() {
       ) : (
         <>
           <p>You are not subscribed to push notifications.</p>
-          <button 
+          <button
             onClick={subscribeToPush}
             className="bg-green-500 text-white px-4 py-2 rounded"
           >
